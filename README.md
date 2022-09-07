@@ -1,22 +1,36 @@
 # PowerShell Labs
 
-Assorted code snippets published in .NET Interactive Notebook files. Many were inspired by
-the [MMS](https://mmsmoa.com) presentation materials by Scott Corio ([@scottcorio](https://twitter.com/ScottCorio)) 
-and Nathan Ziehnert ([@theznerd](https://twitter.com/theznerd)). From there,
-I started exploring other areas where PowerShell performance matters, or is just plain interesting.
+## Welcome!
 
-Please support MMS MOA, as well as Scott and Nathan, and user groups like the [Denver MEMUG](https://memug.org/).
+This GitHub repo contains assorted PowerShell code snippets published in .NET Interactive Notebook files.
 
-## Setup
+The basis of this was heavily inspired by the [MMS](https://mmsmoa.com) presentation materials by Scott Corio 
+([@scottcorio](https://twitter.com/ScottCorio)) and Nathan Ziehnert ([@theznerd](https://twitter.com/theznerd)).
 
-For best results, use Visual Studio Code with the .NET Interactive Notebooks extension. That extension
-will also require the .NET 6 SDK, and you should have the PowerShell (or PowerShell Preview) extension
-installed as well.
+That led me down a rabbit for hours, days, weeks, exploring how different approaches to a given task could vary widely with
+regards to performance.
+
+Please help support [MMS MOA](https://mmsmoa.com), as well as Scott and Nathan, and user groups like:
+
+* Research Triangle PowerShell User Group ([RTPSUG](https://rtpsug.com/))
+* Denver Modern Endpoint Management User Group ([Denver MEMUG](https://memug.org/))
+* [PowerShell.org](https://www.PowerShell.org)
+* [Matthew Dowst](https://twitter.com/mdowst) - [Book](https://www.manning.com/books/practical-automation-with-powershell) - [Newsletter](https://psweekly.dowst.dev/)
+
+These have helped me many many times! I'm sure they'll be helpful to you as well.
+
+## How to Use These Examples
+
+* Install Visual Studio Code
+* Install the Visual Studio Code extensions:
+  * PowerShell (or PowerShell Preview)
+  * .NET Interactive Notebooks (requires the .NET 6 SDK also)
 
 ## Tips
 
-* Run each example in order from top to bottom
+* Run each code block in order from top to bottom (gradually, compare output times)
 * Run each code block at least 3 times, to get an average time
-* Play with each example (modify the code) and test again
+* Try modifying the examples to see how it affects execution time
+* Share feedback here using the "Issues" link above
 
 Enjoy!
