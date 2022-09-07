@@ -1,0 +1,70 @@
+#!markdown
+
+# PowerShell Environment
+
+#!markdown
+
+### Computer Name
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		$null = $env:COMPUTERNAME
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		$null = [System.Environment]::MachineName
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		$shell = New-Object -ComObject 'Wscript.Shell'
+		$null = $shell.ExpandEnvironmentStrings('%COMPUTERNAME%')
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		$net = New-Object -ComObject 'Wscript.Network'
+		$net.ComputerName
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		$sys = New-Object -ComObject 'ADSystemInfo'
+		$sys.ComputerName
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+### UserName
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		$x = $env:USERNAME
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		$x = [System.Environment]::UserName
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds

@@ -1,0 +1,78 @@
+#!markdown
+
+# PowerShell Files
+
+#!markdown
+
+### Reading File Contents
+
+#!pwsh
+
+$filepath = "C:\git\tech-notes\powershell\BraveTools.ps1"
+
+if (!(Test-Path $filepath)) { 
+	Write-Warning "File not found: $filepath"
+} else {
+	$contents = Get-Content -Path "C:\git\tech-notes\powershell\BraveTools.ps1"
+	$contents.GetType().Name
+}
+
+#!pwsh
+
+$contents = Get-Content -Path $filepath
+$contents.Length
+
+#!pwsh
+
+$contents = Get-Content -Path $filepath -Raw
+$contents.Length
+
+#!markdown
+
+### StreamReader
+
+#!pwsh
+
+$file = [System.IO.StreamReader]::new($filepath)
+$contents = $file.ReadToEnd()
+$file.Close()
+$contents.Length
+
+#!markdown
+
+### Writing to Files
+
+#!pwsh
+
+$filepath = [System.IO.Path]::GetTempFileName()
+$filepath
+
+#!pwsh
+
+Start-Process "explorer.exe" -ArgumentList "/e, $env:TEMP"
+
+#!pwsh
+
+Set-Content -Path $filePath -Value "This is the first line" -Force -Encoding ASCII
+
+for ($i = 1; $i -le 10; $i++) {
+	Add-Content -Path $filePath -Value "Line $i - This is another line of text" -Confirm:$False
+}
+
+#!pwsh
+
+cat $filepath
+
+#!pwsh
+
+"this is the first line" | Out-File -Path $filepath -Force -Confirm:$False
+
+for ($i = 10; $i -le 20; $i++) {
+	"Line $i - This is another line of text" | Out-File -Path $filePath -Append
+}
+
+cat $filepath
+
+#!pwsh
+
+Remove-Item -Path $filepath -Force

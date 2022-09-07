@@ -1,0 +1,27 @@
+#!markdown
+
+# Performance - Null Output
+
+#!pwsh
+
+Measure-Command {
+	for ($i=0; $i -lt 1000; $i++) {
+		(Get-Date) | Out-Null
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i=0; $i -lt 1000; $i++) {
+		[void](Get-Date)
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i=0; $i -lt 1000; $i++) {
+		$null = (Get-Date)
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds

@@ -1,0 +1,28 @@
+#!markdown
+
+# PowerShell Runspaces
+
+#!pwsh
+
+Get-Runspace
+
+$runspace = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace()
+$runspace.Open()
+Get-Runspace
+$runspace.Dispose()
+
+#!pwsh
+
+$runspace = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace()
+$runspace.Open()
+$powershell = [PowerShell]::Create()
+$powershell.Runspace = $runspace
+$powershell.AddScript("Set-Variable -Name 'Test' -Value 123")
+$powershell.Invoke()
+$powershell.Dispose()
+
+$powershell = [PowerShell]::Create()
+$powershell.AddScript("Get-Variable -Name 'Test' -ValueOnly")
+$powershell.Invoke()
+$powershell.Dispose()
+$runspace.Dispose()

@@ -1,0 +1,105 @@
+#!markdown
+
+# PowerShell - Date and Time
+
+#!markdown
+
+### Basics
+
+#!pwsh
+
+(Get-Date)
+(Get-Date).ToShortDateString()
+(Get-Date).Month
+
+#!pwsh
+
+(Get-Date -Format 'M/d/yyyy')
+(Get-Date -Format 'MM/dd/yyyy')
+(Get-Date -Format 'ddd MMM d yyyy')
+(Get-Date -Format 'dddd MMMM d, yyyy')
+
+#!pwsh
+
+(Get-Date -Format 'yyyy-MM-dd-hh-mm-ss')
+(Get-Date -Format 'yyyyMMdd-hh:mm:ss')
+
+#!markdown
+
+### Is 2024 a Leap Year?
+
+#!pwsh
+
+[datetime]::IsLeapYear(2024)
+
+#!markdown
+
+### Is This Year a Leap Year?
+
+#!pwsh
+
+[datetime]::IsLeapYear((Get-Date).Year)
+
+#!markdown
+
+### Get the Leap Years through 2050
+
+#!pwsh
+
+$leapyears = 2022..2050 | Where { [datetime]::IsLeapYear($_) }
+$leapyears -join(',')
+
+#!markdown
+
+### Days Until...
+
+#!pwsh
+
+$DaysUntilXmas = (New-TimeSpan -Start (Get-Date) -End "12/25/$((Get-Date).Year)").Days
+$DaysUntilXmas
+
+#!markdown
+
+### Time Zones
+
+#!pwsh
+
+Get-TimeZone -ListAvailable | Select-Object Id,DisplayName
+
+#!markdown
+
+### Date/Time in Two Different Locations
+
+#!pwsh
+
+$tz1 = Get-TimeZone -Id 'North Korea Standard Time'
+$tz2 = Get-TimeZone -Id 'Pacific Standard Time'
+
+$offset1 = $tz1.BaseUtcOffset # offset from UTC
+$offset2 = $tz2.BaseUtcOffset # offset from UTC
+
+$utc = [datetime]::UtcNow
+$time1 = (Get-Date $utc).AddHours($offset1.Hours)
+$time2 = (Get-Date $utc).AddHours($offset2.Hours)
+
+(Get-Date $time1 -f o)
+(Get-Date $time2 -f o)
+
+#!pwsh
+
+Import-Module PSDates
+
+$crontab1 = "* 1 * * *"
+$crontab2 = "* 1 * * * *"
+
+if ((Test-CronTabSchedule -Crontab $crontab1).Valid) {
+	Get-CronNextOccurrence -Crontab $crontab1
+} else {
+	Write-Output "crontab1 is invalid"
+}
+
+if ((Test-CronTabSchedule -Crontab $crontab2).Valid) {
+	Get-CronNextOccurrence -Crontab $crontab2
+} else {
+	Write-Output "crontab2 is invalid"
+}

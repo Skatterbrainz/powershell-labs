@@ -1,0 +1,85 @@
+#!markdown
+
+# Performance - File I/O
+
+#!markdown
+
+### Finding a File by Name
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 1000; $i++) {
+		$files = Get-ChildItem -Path c:\git\tech-notes\memcm | 
+			Where-Object {$_.Name -match "cmg"} | Select-Object -ExpandProperty FullName
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 1000; $i++) {
+		$files = Get-ChildItem -Path c:\git\tech-notes\memcm -Filter "*cmg*" | Select-Object -ExpandProperty FullName
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+### Prep
+
+#!pwsh
+
+# prepare a file for following examples...
+
+$filepath = New-TemporaryFile | Select-Object -ExpandProperty FullName
+
+if (Test-Path $filepath) {
+	for ($i = 0; $i -lt 5; $i++) {
+		Get-Process | Out-File -FilePath $filepath -Append
+	}
+	Write-Output "Saved process data to $filepath"
+} else {
+	Write-Output "File not found: $filepath"
+}
+
+#!markdown
+
+## Reading File Contents
+
+#!markdown
+
+### Get-Content
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 1000; $i++) {
+		[void](Get-Content -Path $filepath)
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+### Get-Content -Raw
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 1000; $i++) {
+		[void](Get-Content -Path $filepath -Raw)
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+### StreamReader / ReadToEnd
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 1000; $i++) {
+		$file = [System.IO.StreamReader]::new($filepath)
+		$contents = $file.ReadToEnd()
+		$file.Close()
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds

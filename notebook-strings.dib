@@ -1,0 +1,330 @@
+#!markdown
+
+# PowerShell - Strings
+
+#!markdown
+
+### String Properties
+
+#!pwsh
+
+$string = "My dog ran fast  "
+$string.Length
+$string = $string.Trim()
+$string.Length
+
+#!pwsh
+
+$string.ToUpper()
+$string.ToLower()
+
+#!markdown
+
+### Literal Strings
+
+#!pwsh
+
+Write-Output "The string above is: $string"
+
+Write-Output 'The string above is: $string'
+
+#!markdown
+
+### Comparison
+
+#!pwsh
+
+$string -eq 'my dog ran fast'  # case insensitive (implied)
+$string -ceq 'my dog ran fast' # case sensitive
+$string -ieq 'my dog ran fast' # case insensitive (explicit)
+
+#!pwsh
+
+$string -like '*ran'
+$string -like 'ran*'
+$string -like '*ran*'
+
+#!markdown
+
+### Split Strings
+
+#!pwsh
+
+$words = $string.Split(' ')
+$words
+
+#!pwsh
+
+$letters = [char[]]$string
+$letters -join '.'
+
+#!pwsh
+
+($letters | Foreach-Object { [byte]$_ }) -join '_'
+
+#!markdown
+
+### Concatenate Strings
+
+#!pwsh
+
+$words -join '_'
+
+#!pwsh
+
+[system.string]::Concat($string, ' ', 'again')
+
+#!markdown
+
+### Padding Strings
+
+#!pwsh
+
+$string.PadLeft(22,'-')
+
+#!pwsh
+
+$string.PadRight(18,'!')
+
+#!markdown
+
+### Split and Concatenate
+
+#!pwsh
+
+$($string.Split(' ') | Foreach-Object { 
+	"$($_.Substring(0,1).ToUpper())$($_.Substring(1).ToLower())"
+}) -join ' '
+
+#!markdown
+
+#### Word Case Example
+
+#!pwsh
+
+$($string.Split(' ') | Foreach-Object {
+	$firstLetter = $_.Substring(0,1).ToUpper()
+	$remainder   = $_.Substring(1).ToLower()
+	"$($firstLetter)$($remainder)"
+}) -join ' '
+
+#!markdown
+
+### Locate Characters within a String
+
+#!pwsh
+
+# find location of char within string, starting at position 0
+$string.IndexOf("g")
+
+#!pwsh
+
+$string.IndexOf('a')
+$string.LastIndexOf('a')
+
+#!pwsh
+
+$words.IndexOfAny('a') # --> ("My", "dog", "ran", "fast")
+
+#!markdown
+
+### Substrings
+
+#!pwsh
+
+$string.Contains('ran')
+
+#!pwsh
+
+$string.Substring(7)
+
+#!pwsh
+
+$string.Substring(7,3)
+
+#!pwsh
+
+$string.StartsWith('M')
+
+#!pwsh
+
+$string.EndsWith('fast')
+
+#!markdown
+
+### Remove Characters
+
+#!pwsh
+
+$string.Remove(2,8)
+
+#!markdown
+
+### Insert Characters
+
+#!pwsh
+
+$string.Insert(11, 'very very ')
+
+#!markdown
+
+### Substitution
+
+#!pwsh
+
+$string.Replace('st','ster')
+$string.Replace('fast','very slow')
+$string.Replace('fast','')
+
+#!pwsh
+
+[double]$price = 59.99
+
+$string4 = "The current price is {0}."
+[string]::Format($string4, $price)
+
+$string4 = "The current price is {0:C2}."
+[string]::Format($string4, $price)
+
+#!pwsh
+
+[string]::Format("As of {0} the temperature outside is {1}°F", (Get-Date -f t), 75)
+
+[string]::Format("As of {0:t} the temperature outside is {1:d}F", (Get-Date), 75)
+
+#!markdown
+
+### Regular Expressions (regex)
+
+#!pwsh
+
+$string -match 'ran'
+
+#!pwsh
+
+$numstring1 = '00010203'
+$numstring1 -match '\d{8}'   # contains 8 adjacent digits
+$numstring1 -match '^\d{8}'  # begins with 8 adjacent digits
+$numstring1 -match '^\d{8}$' # contains only 8 digits
+
+#!pwsh
+
+$numstring2 = 'A00010203'
+$numstring2 -match '\d{8}'   # contains 8 adjacent digits
+$numstring2 -match '^\d{8}'  # begins with 8 adjacent digits
+$numstring2 -match '\d{8}$'  # ends with 8 adjacent digits
+$numstring2 -match '^\d{8}$' # contains only 8 digits
+
+#!pwsh
+
+$numstring3 = 'A00010203X'
+$numstring3 -match '\d{8}'  # contains 8 adjacent digits
+$numstring3 -match '^\d{8}' # begins with 8 adjacent digits
+$numstring3 -match '\d{8}$' # ends with 8 adjacent digits
+
+#!pwsh
+
+$numstring3 -match '^[A-Z]\d{8}[A-Z]$'  # starts with a letter (A to Z), followed by 8 adjacent digits, ends with a letter (A to Z)
+$numstring3 -match '^[A-Z]\d{8}[A-L]$'  # starts with a letter (A to Z), followed by 8 adjacent digits, ends with a letter (A to L)
+
+#!markdown
+
+### Empty Strings
+
+#!pwsh
+
+$string1 = ''
+$string2 = "`t`t"
+$string3 = '                     '
+
+[string]::IsNullOrEmpty($string1)
+[string]::IsNullOrEmpty($string2)
+[string]::IsNullOrEmpty($string3)
+
+#!pwsh
+
+[string]::IsNullOrWhiteSpace($string1)
+[string]::IsNullOrWhiteSpace($string2)
+[string]::IsNullOrWhiteSpace($string3)
+
+#!markdown
+
+### Here Strings
+
+#!pwsh
+
+$string1 = @"
+This is a paragraph of text, which happens
+to have some wrapping as well. The name of 
+this computer is $($env:COMPUTERNAME).
+Today is $(Get-Date -f 'dddd, MMMM d, yyyy').
+"@
+
+$string1
+
+#!pwsh
+
+$string2 = @'
+This is a paragraph of text, which happens
+to have some wrapping as well. The name of 
+this computer is $($env:COMPUTERNAME).
+Today is $(Get-Date -f 'dddd, MMMM d, yyyy').
+'@
+
+$string2
+
+#!markdown
+
+### Character Properties
+
+#!pwsh
+
+$string = "My dog is 20 yrs old!"
+[char]::IsAscii($string[0])          # is first character an ASCII character?
+[char]::IsDigit($string[0])          # is first character a numeric digit?
+[char]::IsPunctuation($string[-1])   # is the last character a punctuation symbol?
+
+#!pwsh
+
+[char[]]$string | Foreach-Object {
+	if ([char]::IsPunctuation($_)) {
+		Write-Output "$($_) is punctuation"
+	} elseif ([char]::IsLetter($_)) {
+		Write-Output "$($_) is a letter"
+	} elseif ([char]::IsWhiteSpace($_)) {
+		Write-Output "__ is whitespace"
+	} elseif ([char]::IsDigit($_)) {
+		Write-Output "$($_) is a digit"
+	}
+}
+
+#!markdown
+
+### XML DOM
+
+#!pwsh
+
+$xml = [xml]'<?xml version="1.0" encoding="UTF-8"?>
+<start>
+	<operation>
+		<req>
+			<op>10</op>
+			<div>B42</div>
+		</req>
+		<req>
+			<op>14</op>
+			<div>Z113</div>
+		</req>
+	</operation>
+</start>'
+
+$xml.Start.Operation.req
+
+#!pwsh
+
+$xml.Start.Operation.req[0].op = '11'
+$xml.Start.Operation.req
+
+#!pwsh
+
+$xml.InnerXML

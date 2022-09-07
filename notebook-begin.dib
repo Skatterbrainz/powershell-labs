@@ -1,0 +1,50 @@
+#!markdown
+
+# PowerShell Examples
+
+- Using .NET Interactive Notebooks within Visual Studio Code
+  
+![](https://avatars.githubusercontent.com/u/11505001?s=120&v=4)
+
+[Skatterbrainz GitHub](https://github.com/Skatterbrainz)
+
+- Visual Studio Code
+- Install .NET Interactive Notebook Extension
+- Create a new file, named with ".dib" extension
+- Start typing!
+- Remember to change the langauge from C# to PowerShell on the first code cell
+
+#!pwsh
+
+$psversiontable
+
+#!pwsh
+
+$user = @{
+	FirstName = "Jose"
+	LastName = "Rivera"
+	Dept = "Research"
+	Title = "Senior Research Scientist"
+}
+$user
+
+#!pwsh
+
+$user.Add("Type","EMP")
+$user
+
+#!pwsh
+
+$user.Title = "Director"
+$user
+
+#!pwsh
+
+$user = [pscustomobject]$user
+$user
+
+#!pwsh
+
+$user.Dept = "Manufacturing"
+#$user.Add('Office','Austin TX')
+$user

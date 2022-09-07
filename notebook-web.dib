@@ -1,0 +1,63 @@
+#!markdown
+
+# PowerShell - Web Methods
+
+#!markdown
+
+### Web Downloads
+
+#!pwsh
+
+$scriptCode = (New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')
+$scriptCode.Length
+
+#!pwsh
+
+$scriptCode = ([System.Net.WebClient]::new()).DownloadString('https://chocolatey.org/install.ps1')
+$scriptCode.Length
+
+#!markdown
+
+### URI Strings
+
+#!pwsh
+
+$uri = [System.Uri]::new('https://chocolatey.org/install.ps1')
+$uri.Host
+$uri.Segments[-1]
+
+#!markdown
+
+### Dad Jokes REST API
+
+- https://rapidapi.com/KegenGuyll/api/dad-jokes/
+- Basic/Free subscription limited to 50 requests per day
+
+#!pwsh
+
+$apikey = Import-Clixml c:\git\tech-notes\powershell\dadjoke.api.xml
+$headers=@{}
+$headers.Add("X-RapidAPI-Host", "dad-jokes.p.rapidapi.com")
+$headers.Add("X-RapidAPI-Key", $apikey)
+$response = Invoke-RestMethod -Uri 'https://dad-jokes.p.rapidapi.com/random/joke' -Method GET -Headers $headers
+$setup = $response.Body.setup
+$punchline = $response.Body.punchline
+Write-Output $setup
+Start-Sleep -Seconds 5
+Write-Output $punchline
+
+#!markdown
+
+### HTML Rendering
+
+#!html
+
+<html>
+<head>
+	<title>Sample HTML</title>
+</head>
+<body>
+	<h1>Hello World!</h1>
+	<p>This is <span style="color:yellow">HTML</span> content.</p>
+</body>
+</html>

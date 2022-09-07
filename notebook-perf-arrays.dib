@@ -1,0 +1,146 @@
+#!markdown
+
+# Performance - Arrays and Lists
+
+#!pwsh
+
+$a = @()
+Measure-Command {
+	1..10000 | Foreach-Object { $a += $_ }
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+# append with for() loop
+$a = @()
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		$a += $i
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+# arraylist
+using namespace System.Collections
+using namespace System.Collections.Generic
+using namespace System.Collections.Concurrent
+
+$a = [ArrayList]::new()
+
+Measure-Command {
+	for ($i = 0; $i -lt 100000; $i++) {
+		[void]$a.Add($i)
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+# generic list
+using namespace System.Collections
+using namespace System.Collections.Generic
+using namespace System.Collections.Concurrent
+
+$a = [List[int]]::new()
+Measure-Command {
+	for ($i = 0; $i -lt 100000; $i++) {
+		$a.Add($i)
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+### Search for Values
+
+#!pwsh
+
+using namespace System.Collections
+using namespace System.Collections.Generic
+using namespace System.Collections.Concurrent
+
+$a = [ArrayList]::new()
+for ($i = 0; $i -lt 100000; $i++) { [void]$a.Add($i) }
+
+Measure-Command { 
+	$a.Contains(10000)
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+using namespace System.Collections
+using namespace System.Collections.Generic
+using namespace System.Collections.Concurrent
+
+$a = [List[int]]::new()
+for ($i = 0; $i -lt 100000; $i++) { [void]$a.Add($i) }
+
+Measure-Command {
+	$a.Contains(10000)
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+### Joining Arrays
+
+#!pwsh
+
+# prep standard arrays
+
+$a1 = 1..10000 | ForEach-Object { $_ * 2 }
+$a2 = 1..10000 | ForEach-Object { ($_ * 2) + 1 }
+
+Measure-Command { 
+
+	$a3 = ($a1 + $a2) | Select-Object -Unique 
+
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+# prep HashSet objects
+
+using namespace System.Collections
+using namespace System.Collections.Generic
+using namespace System.Collections.Concurrent
+
+$a1 = [HashSet[int]]::new()
+$a2 = [HashSet[int]]::new()
+
+1..100000 | Foreach-Object {
+	[void]$a1.Add($_ * 2)
+	[void]$a2.Add(($_ * 2) + 1)
+}
+
+$a3 = [HashSet[int]]::new($a1)
+
+Measure-Command {
+
+	$a3.UnionWith($a2)
+
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+### Sorting
+
+#!pwsh
+
+$randoms = Get-Random -Count 100000
+
+Measure-Command { 
+	$randoms | Sort-Object
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+using namespace System.Collections
+using namespace System.Collections.Generic
+using namespace System.Collections.Concurrent
+
+$randoms = Get-Random -Count 100000
+$list = [List[int]]::new()
+
+Measure-Command {
+	$randoms | ForEach-Object { $list.Add($_) }
+	$list.Sort()
+} | Select-Object -ExpandProperty TotalMilliseconds

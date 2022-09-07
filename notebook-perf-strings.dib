@@ -1,0 +1,219 @@
+#!markdown
+
+# Performance - String Manipulation
+
+#!markdown
+
+### String Arrays
+
+#!pwsh
+
+$string = "a,b,c,d,e,f,g"
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		$char = $string.Split(',')[3]
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+$stringArray = ("a","b","c","d","e","f","g")
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		$char = $stringArray[3]
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+Example 1 defines a string, which is parsed into an array each time through the for-loop. Example 2 defines the array
+
+#!markdown
+
+### Empty Strings
+
+#!pwsh
+
+$test = @("", " ", "`t", $null, "  ")
+Measure-Command {
+	$res = $False
+	1..10000 | Foreach-Object {
+		$out = @()
+		foreach ($item in $test) {
+			$out += ([string]::IsNullOrEmpty($item))
+		}
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+Write-Output $out
+
+#!pwsh
+
+$test = @("", " ", "`t", $null, "  ")
+Measure-Command {
+	$res = $False
+	1..10000 | Foreach-Object {
+		$out = @()
+		foreach ($item in $test) {
+			$out += ([string]::IsNullOrWhiteSpace($item))
+		}
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+Write-Output $out
+
+#!markdown
+
+### Concatenation
+
+#!pwsh
+
+$string1 = "Base"
+$string2 = "NewText"
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		"$($string1) $($string2)"
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+$string1 = "Base"
+$string2 = "NewText"
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		$string1+' '+$string2
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+$string1 = "Base"
+$string2 = "NewText"
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		[system.string]::Concat($string1, ' ', $string2)
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+### Padding
+
+#!pwsh
+
+$string = "Base"
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		while ($string.Length -le 18) {
+			$string += 'x'
+		}
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+$string = "Base"
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		$string.PadRight(18,'x')
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+### Pattern Matches
+
+#!pwsh
+
+$text = "I'm looking for SEC- in this string"
+
+#!pwsh
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		$null = ($text.IndexOf('SEC-') -gt 0)
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		$null = ($text -match 'SEC-')
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		$null = ($text -match '^SEC-')
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		$null = ($text -like '*SEC-*')
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+### Arrays vs. String Split
+
+#!pwsh
+
+$string1 = "One,Two,Alpha,Beta,Primary,Secondary"
+$string2 = ("One","Two","Alpha","Beta","Primary","Secondary")
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		if ("Beta" -in $string1.Split(',')) { $found = $true }
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		if ("Beta" -in $($string1 -split ',')) { $found = $true }
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		if ("Beta" -in $string2) { $found = $true }
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		if ($string2 -contains "Beta") { $found = $true }
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	$string2 | Foreach-Object {
+		if ( $_ -eq "Beta") { $found = $true }
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+### End
