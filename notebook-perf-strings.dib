@@ -209,8 +209,8 @@ Measure-Command {
 #!pwsh
 
 Measure-Command {
-	$string2 | Foreach-Object {
-		if ( $_ -eq "Beta") { $found = $true }
+	(1..10000) | Foreach-Object {
+		if ( $string2 -contains "Beta") { $found = $true }
 	}
 } | Select-Object -ExpandProperty TotalMilliseconds
 

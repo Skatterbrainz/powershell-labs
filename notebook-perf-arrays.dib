@@ -2,6 +2,10 @@
 
 # Performance - Arrays and Lists
 
+#!markdown
+
+Compare performance of appending an array within a Foreach-Object and for() loops
+
 #!pwsh
 
 $a = @()
@@ -18,6 +22,10 @@ Measure-Command {
 		$a += $i
 	}
 } | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+Compare appending an ArrayList, Generic List and Array
 
 #!pwsh
 
@@ -51,6 +59,10 @@ Measure-Command {
 #!markdown
 
 ### Search for Values
+
+#!markdown
+
+Search a Generic List
 
 #!pwsh
 
@@ -131,6 +143,10 @@ Measure-Command {
 	$randoms | Sort-Object
 } | Select-Object -ExpandProperty TotalMilliseconds
 
+#!markdown
+
+Sorting with the Array fill inside the time measure
+
 #!pwsh
 
 using namespace System.Collections
@@ -142,5 +158,23 @@ $list = [List[int]]::new()
 
 Measure-Command {
 	$randoms | ForEach-Object { $list.Add($_) }
+	$list.Sort()
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+Sorting with the Array fill not included in the time measure
+
+#!pwsh
+
+using namespace System.Collections
+using namespace System.Collections.Generic
+using namespace System.Collections.Concurrent
+
+$randoms = Get-Random -Count 100000
+$list = [List[int]]::new()
+$randoms | ForEach-Object { $list.Add($_) }
+
+Measure-Command {
 	$list.Sort()
 } | Select-Object -ExpandProperty TotalMilliseconds

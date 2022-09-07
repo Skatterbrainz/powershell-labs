@@ -8,31 +8,11 @@ Heavily inspired by the MMS session by Scott Corio and Nathan Ziehnert
 
 #!markdown
 
-### Appending Strings
-
-#!pwsh
-
-Measure-Command {
-	$string1 = ""
-	$sb = [System.Text.StringBuilder]::new()
-	for ($i=0; $i -lt 10000; $i++) {
-		[void]$sb.Append('A')
-	}
-	$string1 = $sb.ToString()
-} | Select-Object -ExpandProperty TotalMilliseconds
-
-#!pwsh
-
-Measure-Command {
-	[string]$string2 = ""
-	for ($i=0; $i -lt 10000; $i++) {
-		$string2 += 'B'
-	}
-} | Select-Object -ExpandProperty TotalMilliseconds
+### Evaluated Condition Tests
 
 #!markdown
 
-### Evaluated Condition Tests
+#### If / ElseIf
 
 #!pwsh
 
@@ -52,6 +32,10 @@ Measure-Command {
 	}
 } | Select-Object -ExpandProperty TotalMilliseconds
 
+#!markdown
+
+#### Switch
+
 #!pwsh
 
 [hashtable]$obj = @{FN = 'David'; LN = 'Stein'; Dept = 'Consulting'}
@@ -69,51 +53,7 @@ Measure-Command -Expression {
 
 #!markdown
 
-### Getting a Date
-
-#!pwsh
-
-Measure-Command {
-	for ($i = 0; $i -lt 10000; $i++) {
-		$x = (Get-Date "2022-04-05")
-	}
-} | Select-Object -ExpandProperty TotalMilliseconds
-
-#!pwsh
-
-Measure-Command {
-	for ($i = 0; $i -lt 10000; $i++) {
-		$x = [datetime]"2022-04-05"
-	}
-} | Select-Object -ExpandProperty TotalMilliseconds
-
-#!markdown
-
-### Date Arithmetic
-
-#!pwsh
-
-Measure-Command {
-	for ($i = 0; $i -lt 10000; $i++) {
-		(New-TimeSpan -Start (Get-Date "2/4/2022") -End (Get-Date)).Days -ge 90
-	}
-} | Select-Object -ExpandProperty TotalMilliseconds
-
-#!pwsh
-
-Measure-Command {
-	for ($i = 0; $i -lt 10000; $i++) {
-		(Get-Date "2/4/2022").AddDays(90) -ge (Get-Date)
-	}
-} | Select-Object -ExpandProperty TotalMilliseconds
-
-#!markdown
-
 ### Arrays and Lists
-
-#!markdown
-
-#### ArrayList Search (Where)
 
 #!markdown
 

@@ -1,0 +1,51 @@
+#!markdown
+
+# Date and Time
+
+#!markdown
+
+### Getting a Date
+
+#!markdown
+
+Compare the performance of using Get-Date vs. the [datetime] class
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		$x = (Get-Date "2022-04-05")
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		$x = [datetime]"2022-04-05"
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!markdown
+
+### Datetime Arithmetic
+
+#!markdown
+
+Compare performance of comparing dates using New-TimeSpan and the .AddDays() method
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		(New-TimeSpan -Start (Get-Date "2/4/2022") -End (Get-Date)).Days -ge 90
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10000; $i++) {
+		(Get-Date "2/4/2022").AddDays(90) -ge (Get-Date)
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
