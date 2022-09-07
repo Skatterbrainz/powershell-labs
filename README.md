@@ -1,9 +1,11 @@
 # PowerShell Labs
 
 Assorted code snippets published in .NET Interactive Notebook files. Many were inspired by
-the [MMS](https://mmsmoa.com) presentation materials by Scott Corio ([@scorio](https://twitter.com/scorio)) 
+the [MMS](https://mmsmoa.com) presentation materials by Scott Corio ([@scottcorio](https://twitter.com/ScottCorio)) 
 and Nathan Ziehnert ([@theznerd](https://twitter.com/theznerd)). From there,
-I started exploring other areas where PowerShell performance matters.
+I started exploring other areas where PowerShell performance matters, or is just plain interesting.
+
+Please support MMS MOA, as well as Scott and Nathan, and user groups like the [Denver MEMUG](https://memug.org/).
 
 ## Setup
 
