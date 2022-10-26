@@ -1,0 +1,6 @@
+Name,OS,Version,Description,Owner
+server110,Windows,2019,File and Print,Infrastructure
+server112,Windows,2019,SQL Server,DBA
+server132,Windows,2022,Archival,DBA
+server190,Linux,Ubuntu 2004,Web Apps,AppDev
+server201,Linux,Ubuntu 2204,Web Apps,AppDev

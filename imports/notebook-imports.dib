@@ -1,0 +1,146 @@
+#!markdown
+
+# Importing Data
+
+#!markdown
+
+## Overview
+
+#!markdown
+
+* Small quantity inputs = direct/manual input
+* Larger quantities = batch input
+* Batch inputs = audit trail, input record
+
+#!markdown
+
+## Scenario
+
+#!markdown
+
+You are asked to run a command to output information from a list of computers on your network. The list might be a handful, or thousands, but your script needs to be flexible enough to handle any size list without having to change the code every time.
+
+#!markdown
+
+* Direct entry (array, arraylist, generic list, etc.)
+* File import (txt, csv, xlsx, xml, json, etc.)
+* Database query results (SQL)
+* Active Directory query (LDAP, ADSI)
+* Web content (REST, HTML, etc.)
+
+#!markdown
+
+Expected output might be a list of computer names, or may be a list of objects with properties that include a computer name.
+
+#!markdown
+
+### Reading a Text File
+
+#!pwsh
+
+$filename = ".\computers.txt"
+$computerNames = Get-Content -Path $filename
+
+#!markdown
+
+### Reading a CSV file
+
+#!pwsh
+
+$filename = ".\computers.csv"
+$computerNames = Import-Csv -Path $filename
+
+#!markdown
+
+### Reading a Tab-delimited file
+
+#!pwsh
+
+$filename = ".\computers.tsv" # extension really doesn't matter
+$computerNames = Import-Csv -Path $filename -Delimiter "`t"
+
+#!markdown
+
+### Reading from a SQL Databse query
+
+#!pwsh
+
+if (Get-Module dbatools -ListAvailable) {
+	$computerNames = Invoke-DbaQuery -SqlInstance "db1.contoso.local" -Database "Inventory" -Query "select devicename from devices order by devicename"
+}
+
+#!pwsh
+
+# splatted version
+
+if (Get-Module dbatools -ListAvailable) {
+	$params = @{
+		SqlInstance = "db1.contoso.local"
+		Database = "Inventory"
+		Query = "select devicename from devices order by devicename"
+	}
+	$computerNames = Invoke-DbaQuery @params
+}
+
+#!markdown
+
+### Reading from an Active Directory Domain
+
+#!pwsh
+
+if (Get-Module ActiveDirectory -ListAvailable) {
+	$computerNames = Get-ADComputer -Filter * | Sort-Object Name | Select-Object -ExpandProperty Name
+}
+
+#!markdown
+
+### Reading from Azure AD
+
+#!pwsh
+
+if (Get-Module AzureAd -ListAvailable) {
+	if (!$azconn) { $azconn = Connect-AzureAd }
+	$computerNames = Get-AzureAdDevice -Filter "DeviceOSType -eq 'Windows'" | Select-Object -ExpandProperty DeviceName
+}
+
+#!markdown
+
+### Reading from Azure
+
+#!pwsh
+
+if (Get-Module Az.Compute) {
+	if (Get-AzContext) {
+		$computerNames = Get-AzVm -Location centralus | Select-Object -ExpandProperty Name
+	}
+}
+
+#!markdown
+
+### REST API endpoint
+
+#!pwsh
+
+$response = Invoke-RestMethod -Method Get -UseBasicParsing -Uri 'https://datausa.io/api/data?drilldowns=Nation&measures=Population'
+$response.data
+
+# Microsoft Graph
+Connect-MgGraph -Scopes "User.Read.All"
+$computerNames = Get-MgDevice -Filter ""
+
+#!markdown
+
+## Examples
+
+#!pwsh
+
+$computerNames | Foreach-Object {
+	$params = @{
+		Server = $_
+		Start = "03/13/2022 09:00:00"
+		End = "03/25/2022 17:00:00"
+		MessageSubject = "Project MK-Ultra"
+		ResultSize = 'Unlimited'
+	}
+	$logs = Get-MessageTrackingLog @params
+}
