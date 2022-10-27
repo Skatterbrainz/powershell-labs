@@ -4,21 +4,25 @@
 
 #!markdown
 
+2022-October : David Stein : @skatterbrainzz : skatterbrainz.wordpress.com
+
+#!markdown
+
 ## Overview
 
 #!markdown
 
-* Small quantity inputs = direct/manual input
-* Larger quantities = batch input
+* Multiple ways to bring data into PowerShell for processing
+* Small quantity inputs = Direct/manual input
+* Larger quantities = Batch input
 * Batch inputs = audit trail, input record
+* Examples:
+  * Querying information from 2 or 3 machines
+  * Querying information from 10,000 machines
 
 #!markdown
 
-## Scenario
-
-#!markdown
-
-You are asked to run a command to output information from a list of computers on your network. The list might be a handful, or thousands, but your script needs to be flexible enough to handle any size list without having to change the code every time.
+Situations which involve processing large numbers of input values are often challenging to enter manually. Even when populating a list of values manually, it can be a challenge. PowerShell can help with retrieving a list of values from nearly unlimited types of sources. Common examples are listed below.
 
 #!markdown
 
@@ -30,11 +34,15 @@ You are asked to run a command to output information from a list of computers on
 
 #!markdown
 
-Expected output might be a list of computer names, or may be a list of objects with properties that include a computer name.
+Each of these examples (above) could potentially provide a list of values to be fed into other processes. For example, a list of user accounts, devices, employee records and so on. The list could consist of simple value types like strings or numbers, or could be objects. What you decide to extract from a data source will depend on what you need to do with the data afterwards. If you only need device names, then you can speed up the import process by only requesting the device names.
 
 #!markdown
 
 ### Reading a Text File
+
+#!markdown
+
+This method imports data from an ASCII text file, where each value is separated on its own line (line feed). Refer to "computers.txt" sample file in this same path for what the expected format would look like.
 
 #!pwsh
 
@@ -45,19 +53,27 @@ $computerNames = Get-Content -Path $filename
 
 ### Reading a CSV file
 
+#!markdown
+
+This method imports from a CSV, or comma-separated value, format file. The file extension .csv is most commonly used, but the Import-Csv cmdlet doesn't really care what the filename or extension are.  Refer to "computers.csv" for an example of this type of format.  Also, as long as there exists a column named "Name", any other (or no other) columns matter. You could use a file with only one column, or 100 columns. The example below will only look for values under the "Name" column.
+
 #!pwsh
 
 $filename = ".\computers.csv"
-$computerNames = Import-Csv -Path $filename
+$computerNames = Import-Csv -Path $filename | Select-Object -ExpandProperty Name
 
 #!markdown
 
 ### Reading a Tab-delimited file
 
+#!markdown
+
+This method is nearly identical to importing from CSV files. The only difference is what character is used to delimit each column for each row. In this case, a Tab character is used.  You can easily substitue other characters to accommodate different file formats, for example a semi-colon ";". Other than that, it works the same as importing CSV data.
+
 #!pwsh
 
 $filename = ".\computers.tsv" # extension really doesn't matter
-$computerNames = Import-Csv -Path $filename -Delimiter "`t"
+$computerNames = Import-Csv -Path $filename -Delimiter "`t" | Select-Object -ExpandProperty Name
 
 #!markdown
 
