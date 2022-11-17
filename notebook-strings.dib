@@ -8,7 +8,16 @@
 
 #!pwsh
 
+$string = "1,324"
+$string.GetType()
+
+#!pwsh
+
 $string = "My dog ran fast  "
+$string.GetType()
+
+#!pwsh
+
 $string.Length
 $string = $string.Trim()
 $string.Length
@@ -24,9 +33,41 @@ $string.ToLower()
 
 #!pwsh
 
+# double-quotes are dynamic/expandable
 Write-Output "The string above is: $string"
 
+# single-quotes are literal/static
 Write-Output 'The string above is: $string'
+
+#!markdown
+
+#### In-line Expression Expansion
+
+#!pwsh
+
+Write-Output "The string above says $($string.Trim().ToUpper())."
+Write-Output "But the first 2 words are: $($string.Split(" ")[0..1] -join ' ')"
+
+#!markdown
+
+**NOTE**... Use caution with repeated (identical) in-line expansion of expressions. If you intend to use $string.ToUpper() multiple times in a string, or throughout multiple strings, assign the value to a variable and use the variable instead. Performance matters!
+
+#!pwsh
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		$x = "the upper case first word is: $($string.Split(" ")[0].ToUpper())"
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	$y = $string.Split(" ")[0].ToUpper()
+	for ($i=0; $i -lt 10000; $i++) {
+		$x = "the upper case first word is: $y"
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
 
 #!markdown
 
@@ -48,6 +89,10 @@ $string -like '*ran*'
 
 ### Split Strings
 
+#!markdown
+
+For more about ```-split()``` or ```.Split()``` refer to [About_Split](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_split?view=powershell-7.3)
+
 #!pwsh
 
 $words = $string.Split(' ')
@@ -62,13 +107,30 @@ $letters -join '.'
 
 ($letters | Foreach-Object { [byte]$_ }) -join '_'
 
+#!pwsh
+
+$string.ToCharArray()
+
 #!markdown
 
-### Concatenate Strings
+### Concatenate (Join) Strings
+
+#!pwsh
+
+$x = 'The sentence above says: '+$string+' / and that is all.'
+$x
+
+#!markdown
+
+Use the ```-join()``` operator to concatenate two or more string values together.
 
 #!pwsh
 
 $words -join '_'
+
+#!markdown
+
+Use the .NET ```Concat()``` method to concatenate two or more string values together.
 
 #!pwsh
 
@@ -81,6 +143,7 @@ $words -join '_'
 #!pwsh
 
 $string.PadLeft(22,'-')
+$string.PadLeft(22,'.')
 
 #!pwsh
 
@@ -90,6 +153,10 @@ $string.PadRight(18,'!')
 
 ### Split and Concatenate
 
+#!markdown
+
+This example converts the sentence to "Word Case", where each word begins with an Upper case character and the remaining characters are lower case.
+
 #!pwsh
 
 $($string.Split(' ') | Foreach-Object { 
@@ -98,14 +165,14 @@ $($string.Split(' ') | Foreach-Object {
 
 #!markdown
 
-#### Word Case Example
+#### Alternate version of the above example
 
 #!pwsh
 
 $($string.Split(' ') | Foreach-Object {
-	$firstLetter = $_.Substring(0,1).ToUpper()
-	$remainder   = $_.Substring(1).ToLower()
-	"$($firstLetter)$($remainder)"
+	$firstLetter = $_.Substring(0,1).ToUpper() # save first character to a variable
+	$remainder   = $_.Substring(1).ToLower() # save remaning string of word to a variable
+	"$($firstLetter)$($remainder)" # concatenate the two variables
 }) -join ' '
 
 #!markdown
@@ -168,7 +235,7 @@ $string.Insert(11, 'very very ')
 
 #!markdown
 
-### Substitution
+### Substitute / Replace Strings
 
 #!pwsh
 
@@ -229,7 +296,7 @@ $numstring3 -match '^[A-Z]\d{8}[A-L]$'  # starts with a letter (A to Z), followe
 
 #!markdown
 
-### Empty Strings
+### Checking for Empty Strings
 
 #!pwsh
 
@@ -275,7 +342,41 @@ $string2
 
 #!markdown
 
+### Special Characters
+
+#!markdown
+
+For more on Special Characters with PowerShell, check out: [about_Special_Characters](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_special_characters?view=powershell-7.3)
+
+#!markdown
+
+#### New-Line
+
+#!pwsh
+
+Write-Host "Line 1`nLine 2"
+
+#!markdown
+
+#### Tab spacing
+
+#!pwsh
+
+Write-Host "Dept`tDiv`tLocID`tLocName"
+Write-Host "0012`t014`t0043`tUSVAORF"
+Write-Host "0003`t022`t0102`tUSNYLGA"
+
+#!pwsh
+
+Write-Host "I really want this part of the sentence.`rReplaced with this instead"
+
+#!markdown
+
 ### Character Properties
+
+#!markdown
+
+Use .NET methods of the ```[char]``` namespace. 
 
 #!pwsh
 
