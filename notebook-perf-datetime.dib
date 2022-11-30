@@ -18,8 +18,6 @@ Measure-Command {
 	}
 } | Select-Object -ExpandProperty TotalMilliseconds
 
-#!pwsh
-
 Measure-Command {
 	for ($i = 0; $i -lt 10000; $i++) {
 		$x = [datetime]"2022-04-05"
@@ -32,20 +30,29 @@ Measure-Command {
 
 #!markdown
 
-Compare performance of comparing dates using New-TimeSpan and the .AddDays() method
+#### Compare performance of comparing dates using New-TimeSpan and the .AddDays() method
+
+#!markdown
+
+* Example 1 = Get TimeSpan (delta) between a past date and today
+* Example 2 = Add 90 days to a past date and check if it's in the future
 
 #!pwsh
 
+$datevalue = "8/1/2022"
+
+# EXAMPLE 1
+
 Measure-Command {
 	for ($i = 0; $i -lt 10000; $i++) {
-		(New-TimeSpan -Start (Get-Date "2/4/2022") -End (Get-Date)).Days -ge 90
+		(New-TimeSpan -Start (Get-Date $datevalue) -End (Get-Date)).Days -gt 90
 	}
 } | Select-Object -ExpandProperty TotalMilliseconds
 
-#!pwsh
+# EXAMPLE 2
 
 Measure-Command {
 	for ($i = 0; $i -lt 10000; $i++) {
-		(Get-Date "2/4/2022").AddDays(90) -ge (Get-Date)
+		(Get-Date $datevalue).AddDays(90) -gt (Get-Date)
 	}
 } | Select-Object -ExpandProperty TotalMilliseconds

@@ -9,8 +9,31 @@
 #!pwsh
 
 (Get-Date)
-(Get-Date).ToShortDateString()
+[datetime]::Now
+
+#!markdown
+
+#### Date Properties
+
+#!pwsh
+
+(Get-Date).Hour
+(Get-Date).DayOfYear
+
+#!pwsh
+
 (Get-Date).Month
+(Get-Date).DayOfWeek
+
+#!markdown
+
+#### Date Methods
+
+#!pwsh
+
+(Get-Date).IsDaylightSavingTime()
+(Get-Date "6/15/2023").IsDaylightSavingTime()
+(Get-Date).ToShortDateString()
 
 #!pwsh
 
@@ -82,8 +105,16 @@ $utc = [datetime]::UtcNow
 $time1 = (Get-Date $utc).AddHours($offset1.Hours)
 $time2 = (Get-Date $utc).AddHours($offset2.Hours)
 
-(Get-Date $time1 -f o)
-(Get-Date $time2 -f o)
+Write-Host "UTC current time is $utc"
+Write-Host "$($tz1.Id) is $($offset1.Hours) hours from UTC : Current time is $(Get-Date $time1)"
+Write-Host "$($tz2.Id) is $($offset2.Hours) hours from UTC : Current time is $(Get-Date $time2)"
+
+#(Get-Date $time1 -f o)
+#(Get-Date $time2 -f o)
+
+#!markdown
+
+### Working with Crontab data
 
 #!pwsh
 
@@ -103,3 +134,21 @@ if ((Test-CronTabSchedule -Crontab $crontab2).Valid) {
 } else {
 	Write-Output "crontab2 is invalid"
 }
+
+#!markdown
+
+#### Performance
+
+#!pwsh
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		$x = (Get-Date)
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+Measure-Command {
+	for ($i=0; $i -lt 10000; $i++) {
+		$x = [datetime]::Now
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
