@@ -1,0 +1,75 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":null,"items":[{"name":"csharp","languageName":"C#","aliases":["c#","cs"]},{"name":"fsharp","languageName":"F#","aliases":["f#","fs"]},{"name":"pwsh","languageName":"PowerShell","aliases":["powershell"]},{"name":"javascript","languageName":"JavaScript","aliases":["js"]},{"name":"html","languageName":"HTML"},{"name":"sql","languageName":"SQL"},{"name":"kql","languageName":"KQL"},{"name":"mermaid","languageName":"Mermaid"},{"name":"httpRequest","languageName":"http"},{"name":"value"}]}}
+
+#!markdown
+
+# Pipeline Functions
+
+#!markdown
+
+Compare the performance of passing pipeline input parameters through a pipeline or through the parameter name.
+
+#!markdown
+
+First, let's define the test function...
+
+#!pwsh
+
+function Invoke-BeginProcessEnd {
+	param (
+		[parameter(Mandatory=$true, ValueFromPipeline=$true)][int[]]$Number
+	)
+	begin {
+		$sum = 0
+		$items = 0
+	}
+	process {
+		foreach ($n in $Number) {
+			$sum += $n
+			$items++
+		}
+	}
+	end {
+		[pscustomobject]@{
+			Count = $items
+			Total = $sum
+		}
+	}
+}
+
+#!markdown
+
+### Input through Pipeline
+
+#!pwsh
+
+1..100 | Invoke-BeginProcessEnd
+
+#!markdown
+
+### Input through Parameter
+
+#!pwsh
+
+Invoke-BeginProcessEnd -Number (1..100)
+
+#!markdown
+
+### Compare Performance
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10; $i++) {
+		(1..100) | Invoke-BeginProcessEnd
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+Measure-Command {
+	for ($i = 0; $i -lt 10; $i++) {
+		Invoke-BeginProcessEnd -Number (1..100)
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
