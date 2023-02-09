@@ -26,7 +26,8 @@ Get commit description by asking OpenAI to analyze the git changes
 #!pwsh
 
 cd "c:\git\powershell-labs"
-git status | ai "write a detailed commit description"
+git stage --all
+git status | ai "write a detailed commit description for the staged changes"
 
 #!markdown
 
@@ -34,7 +35,7 @@ Stage and Commit changes with AI-generated commit message
 
 #!pwsh
 
-git status | ai "write a detailed commit description" | % { git stage --all; git commit -m "$($_)" }
+git status | ai "write a detailed commit description for the staged changes" | % { git stage --all; git commit -m "$($_)" }
 
 #!pwsh
 
