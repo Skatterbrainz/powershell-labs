@@ -4,18 +4,35 @@
 
 #!markdown
 
-# OpenAI
+# OpenAI with PowerShellAI module
 
 #!markdown
 
-### PowerShellAI Examples
+### PowerShellAI setup
+
+Install the PowerShell module
+
+#!pwsh
+
+if (!(Get-Module PowerShellAI -ListAvailable)) {
+	Write-Output "Install-Module PowerShellAI"
+}
+
+#!markdown
+
+### Preparation
+
+* OpenAI Playground Account
+* Create an API key (copy to clipboard)
+* Store in a secure place (key vault, etc.)
+* Import into environment variable "OpenAIKey"
 
 #!pwsh
 
 if (-not $($env:OpenAIKey)) {
 	if (Test-Path HKCU:\SOFTWARE\Skatterbrainz) {
 		$env:OpenAIKey = $(Get-ItemProperty -Path HKCU:\software\Skatterbrainz -Name OpenAIKey).OpenAIKey
-		write-output "key imported"
+		Write-Output "key imported"
 	}
 }
 
@@ -27,7 +44,7 @@ Get commit description by asking OpenAI to analyze the git changes
 
 cd "c:\git\powershell-labs"
 git stage --all
-git status | ai "write a detailed commit description for the staged changes"
+git status | ai "write me a detailed commit message for the staged changes"
 
 #!markdown
 
@@ -35,8 +52,16 @@ Stage and Commit changes with AI-generated commit message
 
 #!pwsh
 
-git status | ai "write a detailed commit description for the staged changes" | % { git stage --all; git commit -m "$($_)" }
+git status | ai "write me a detailed commit message for the staged changes" | % { git stage --all; git commit -m "$($_)" }
+
+#!markdown
+
+### General Examples
 
 #!pwsh
 
 copilot "using powershell and ms graph, just code, show me how to connect to ms graph to query azure ad user accounts"
+
+#!pwsh
+
+ai "using powershell and regex, just code, show me how to validate a string as being a valid email address format"
