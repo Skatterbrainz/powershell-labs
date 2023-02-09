@@ -1,0 +1,41 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","aliases":[]},{"name":"vscode","languageName":null,"aliases":["frontend"]}]}}
+
+#!markdown
+
+# OpenAI
+
+#!markdown
+
+### PowerShellAI Examples
+
+#!pwsh
+
+if (-not $($env:OpenAIKey)) {
+	if (Test-Path HKCU:\SOFTWARE\Skatterbrainz) {
+		$env:OpenAIKey = $(Get-ItemProperty -Path HKCU:\software\Skatterbrainz -Name OpenAIKey).OpenAIKey
+		write-output "key imported"
+	}
+}
+
+#!markdown
+
+Get commit description by asking OpenAI to analyze the git changes
+
+#!pwsh
+
+cd "c:\git\powershell-labs"
+git status | ai "write a detailed commit description"
+
+#!markdown
+
+Stage and Commit changes with AI-generated commit message
+
+#!pwsh
+
+git status | ai "write a detailed commit description" | % { git stage --all; git commit -m "$($_)" }
+
+#!pwsh
+
+copilot "using powershell and ms graph, just code, show me how to connect to ms graph to query azure ad user accounts"
