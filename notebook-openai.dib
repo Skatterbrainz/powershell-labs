@@ -1,6 +1,6 @@
 #!meta
 
-{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","aliases":[]},{"name":"vscode","languageName":null,"aliases":["frontend"]}]}}
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#","aliases":["c#","C#"]},{"name":"vscode","aliases":["frontend"],"languageName":null},{"name":".NET","aliases":[],"languageName":null},{"name":"fsharp","languageName":"F#","aliases":["f#","F#"]},{"name":"html","languageName":"HTML","aliases":[]},{"name":"kql","languageName":"KQL","aliases":[]},{"name":"mermaid","languageName":"Mermaid","aliases":[]},{"name":"pwsh","languageName":"PowerShell","aliases":["powershell"]},{"name":"sql","languageName":"SQL","aliases":[]},{"name":"value","aliases":[],"languageName":null}]}}
 
 #!markdown
 
@@ -16,6 +16,8 @@ Install the PowerShell module
 
 if (!(Get-Module PowerShellAI -ListAvailable)) {
 	Write-Output "Install-Module PowerShellAI"
+} else {
+	Write-Output "Module is already installed"
 }
 
 #!markdown
@@ -65,3 +67,7 @@ copilot "using powershell and ms graph, just code, show me how to connect to ms 
 #!pwsh
 
 ai "using powershell and regex, just code, show me how to validate a string as being a valid email address format"
+
+#!pwsh
+
+ai "provide a table of the top 5 most populated US states, including their full name, abbreviation, population as of 2020 and sort by population in descending order. Output as json"
