@@ -71,3 +71,7 @@ ai "using powershell and regex, just code, show me how to validate a string as b
 #!pwsh
 
 ai "provide a table of the top 5 most populated US states, including their full name, abbreviation, population as of 2020 and sort by population in descending order. Output as json"
+
+#!pwsh
+
+ai "provide a table of the top 5 most populated US states, including their full name, abbreviation, population as of 2020 and sort by population in descending order. Output as a markdown table"
