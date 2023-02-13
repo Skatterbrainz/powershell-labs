@@ -8,34 +8,44 @@
 
 #!markdown
 
+### Preparation
+
+#!markdown
+
+* Create an OpenAI Account
+  * Read Pricing information: https://openai.com/api/pricing/
+  * Review and try examples: https://platform.openai.com/examples
+  * Create an API key (copy to clipboard)
+* Store API key in a safe place (key vault, etc.)
+* Import into environment variable "OpenAIKey" ($env:OpenAIKey)
+* Install-Module PowerShellAI
+
+#!markdown
+
 ### PowerShellAI setup
 
-Install the PowerShell module
+#!markdown
+
+##### Import the module
 
 #!pwsh
 
 if (!(Get-Module PowerShellAI -ListAvailable)) {
 	Write-Output "Install-Module PowerShellAI"
 } else {
-	Write-Output "Module is already installed"
+	Update-Module PowerShellAI
+	Write-Output "Module is updated"
 }
-
-#!markdown
-
-### Preparation
-
-* OpenAI Playground Account
-* Create an API key (copy to clipboard)
-* Store in a secure place (key vault, etc.)
-* Import into environment variable "OpenAIKey"
 
 #!pwsh
 
-if (-not $($env:OpenAIKey)) {
+if ([string]::IsNullOrWhiteSpace($env:OpenAIKey)) {
 	if (Test-Path HKCU:\SOFTWARE\Skatterbrainz) {
 		$env:OpenAIKey = $(Get-ItemProperty -Path HKCU:\software\Skatterbrainz -Name OpenAIKey).OpenAIKey
 		Write-Output "key imported"
 	}
+} else {
+	Write-Output "key already imported"
 }
 
 #!markdown
@@ -46,7 +56,7 @@ Get commit description by asking OpenAI to analyze the git changes
 
 cd "c:\git\powershell-labs"
 git stage --all
-git status | ai "write me a detailed commit message for the staged changes"
+git status | ai "write me a detailed commit message for the staged changes in this repo"
 
 #!markdown
 
@@ -54,24 +64,86 @@ Stage and Commit changes with AI-generated commit message
 
 #!pwsh
 
-git status | ai "write me a detailed commit message for the staged changes" | % { git stage --all; git commit -m "$($_)" }
+cd "c:\git\azurelabs"
+git stage --all
+git status | ai "write me a detailed commit message for the staged changes in this repo" | % { git commit -m "$($_)" }
 
 #!markdown
 
-### General Examples
+### Examples - Moderation API
+
+#!markdown
+
+* Definition: Given a input text, outputs if the model classifies it as violating OpenAI's content policy.
+* Reference: https://platform.openai.com/docs/api-reference/moderations
 
 #!pwsh
 
-copilot "using powershell and ms graph, just code, show me how to connect to ms graph to query azure ad user accounts"
+Get-OpenAIModeration "I hate red cars"
 
 #!pwsh
 
-ai "using powershell and regex, just code, show me how to validate a string as being a valid email address format"
+Get-OpenAIModeration "I want to kill red cars."
 
 #!pwsh
 
-ai "provide a table of the top 5 most populated US states, including their full name, abbreviation, population as of 2020 and sort by population in descending order. Output as json"
+Get-OpenAIModeration "I want to kill them."
 
 #!pwsh
 
-ai "provide a table of the top 5 most populated US states, including their full name, abbreviation, population as of 2020 and sort by population in descending order. Output as a markdown table"
+$result = Get-OpenAIModeration "I want to kill them."
+$result.psobject.properties | where {$_.Value -eq $true} | select name
+
+#!markdown
+
+### Examples - Completions API
+
+#!pwsh
+
+Get-GPT3Completion "use powershell regex, validate text as being a valid email address"
+
+#!pwsh
+
+ai "use powershell regex, validate text as being a valid email address"
+
+#!markdown
+
+### Examples - Edits API
+
+#!markdown
+
+* Definition: Given a prompt and an instruction, the model will return an edited version of the prompt
+* Reference: https://platform.openai.com/docs/api-reference/edits
+
+#!pwsh
+
+ai "tp 5 us states with most people with 2020 population and their capitals in json"
+
+#!pwsh
+
+Get-OpenAIEdit "powershell code get tp 5 us states with most people with 2020 population and their capitals in json" -Instruction "fix the spelling mistakes"
+
+#!pwsh
+
+Get-OpenAIEdit "powershell code get tp 5 us states with most people with 2020 population and their capitals in json" -Instruction "fix the spelling mistakes" -edits 3
+
+#!pwsh
+
+ai "use powershell regex, validate text as being a valid email address"
+
+#!pwsh
+
+ai "powershell code get the top 5 us states with most people with 2020 population"
+
+#!pwsh
+
+ai "powershell code get the top 5 us states with most people with 2020 population" -max_tokens 2000
+
+#!markdown
+
+#### Test Output
+
+#!pwsh
+
+"mickey.mouse@disney.com" -match '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+"mickey.mouse@disneycom" -match '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
