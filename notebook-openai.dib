@@ -37,16 +37,13 @@ if (!(Get-Module PowerShellAI -ListAvailable)) {
 	Write-Output "Module is updated"
 }
 
+#!markdown
+
+#### Define the OpenAIKey environment variable ($env:OpenAIKey)
+
 #!pwsh
 
-if ([string]::IsNullOrWhiteSpace($env:OpenAIKey)) {
-	if (Test-Path HKCU:\SOFTWARE\Skatterbrainz) {
-		$env:OpenAIKey = $(Get-ItemProperty -Path HKCU:\software\Skatterbrainz -Name OpenAIKey).OpenAIKey
-		Write-Output "key imported"
-	}
-} else {
-	Write-Output "key already imported"
-}
+$env:OpenAIKey = "" # paste API key and run
 
 #!markdown
 
@@ -83,28 +80,23 @@ Get-OpenAIModeration "I hate red cars"
 
 #!pwsh
 
-Get-OpenAIModeration "I want to kill red cars."
+Get-OpenAIModeration "I want to destroy red cars."
 
 #!pwsh
 
-Get-OpenAIModeration "I want to kill them."
+Get-OpenAIModeration "I want to destroy them."
 
 #!pwsh
 
-$result = Get-OpenAIModeration "I want to kill them."
-$result.psobject.properties | where {$_.Value -eq $true} | select name
-
-#!markdown
-
-### Examples - Completions API
+Get-OpenAIModeration "I want to smash it with a hammer!"
 
 #!pwsh
 
-Get-GPT3Completion "use powershell regex, validate text as being a valid email address"
+Get-OpenAIModeration "I want to smash them with a hammer!"
 
 #!pwsh
 
-ai "use powershell regex, validate text as being a valid email address"
+Get-OpenAIModeration "I want to destroy them." | foreach { $_.psobject.properties | where {$_.Value -eq $true} | select name }
 
 #!markdown
 
@@ -117,15 +109,15 @@ ai "use powershell regex, validate text as being a valid email address"
 
 #!pwsh
 
-ai "tp 5 us states with most people with 2020 population and their capitals in json"
+ai "show the regex too vlidate email user"
 
 #!pwsh
 
-Get-OpenAIEdit "powershell code get tp 5 us states with most people with 2020 population and their capitals in json" -Instruction "fix the spelling mistakes"
+Get-OpenAIEdit "powershell code get tp 5 us states wth most people with 2020 population n their capitals in json" -Instruction "fix the spelling mistakes"
 
 #!pwsh
 
-Get-OpenAIEdit "powershell code get tp 5 us states with most people with 2020 population and their capitals in json" -Instruction "fix the spelling mistakes" -edits 3
+Get-OpenAIEdit "powershell code get tp 5 us states wth most people with 2020 population n their capitals in json" -Instruction "fix the spelling mistakes" -edits 3
 
 #!pwsh
 
@@ -147,3 +139,7 @@ ai "powershell code get the top 5 us states with most people with 2020 populatio
 
 "mickey.mouse@disney.com" -match '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 "mickey.mouse@disneycom" -match '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+
+#!pwsh
+
+ai "use powershell regex, validate text as being a valid email address"
