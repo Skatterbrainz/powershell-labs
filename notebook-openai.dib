@@ -1,6 +1,6 @@
 #!meta
 
-{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#","aliases":["c#","C#"]},{"name":"vscode","aliases":["frontend"],"languageName":null},{"name":".NET","aliases":[],"languageName":null},{"name":"fsharp","languageName":"F#","aliases":["f#","F#"]},{"name":"html","languageName":"HTML","aliases":[]},{"name":"kql","languageName":"KQL","aliases":[]},{"name":"mermaid","languageName":"Mermaid","aliases":[]},{"name":"pwsh","languageName":"PowerShell","aliases":["powershell"]},{"name":"sql","languageName":"SQL","aliases":[]},{"name":"value","aliases":[],"languageName":null}]}}
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#","aliases":["c#","C#"]},{"name":"vscode","aliases":["frontend"],"languageName":null},{"name":".NET","aliases":[]},{"name":"fsharp","languageName":"F#","aliases":["f#","F#"]},{"name":"html","languageName":"HTML","aliases":[]},{"name":"kql","languageName":"KQL","aliases":[]},{"name":"mermaid","languageName":"Mermaid","aliases":[]},{"name":"pwsh","languageName":"PowerShell","aliases":["powershell"]},{"name":"sql","languageName":"SQL","aliases":[]},{"name":"value","aliases":[]}]}}
 
 #!markdown
 
@@ -43,7 +43,10 @@ if (!(Get-Module PowerShellAI -ListAvailable)) {
 
 #!pwsh
 
-$env:OpenAIKey = "" # paste API key and run
+#$env:OpenAIKey = "" # paste API key and run
+if (Test-Path HKCU:\SOFTWARE\Skatterbrainz) {
+	$env:OpenAIKey = $(Get-ItemProperty -Path HKCU:\software\Skatterbrainz -Name OpenAIKey).OpenAIKey
+}
 
 #!markdown
 
@@ -143,3 +146,50 @@ ai "powershell code get the top 5 us states with most people with 2020 populatio
 #!pwsh
 
 ai "use powershell regex, validate text as being a valid email address"
+
+#!markdown
+
+### More
+
+#!pwsh
+
+gpt "write a powershell function to return the intersection elements of two arrays"
+
+#!pwsh
+
+ai "last 5 states to join the nation, with their abbreviations and the year they joined"
+
+#!pwsh
+
+ai "last 5 states to join the nation, with their abbreviations and the year they joined, as a markdown table"
+
+#!pwsh
+
+ai "last 5 states to join the nation, with their abbreviations and the year they joined, as a markdown table" | ConvertFrom-GPTMarkdownTable
+
+#!markdown
+
+### Doug's Examples (NYPSUG)
+
+#!pwsh
+
+$p = '
+For SQL create a customer table with the following columns:
+id
+First Name
+Last Name
+City
+State
+Postal
+Country
+WorkPhone
+'
+Get-GPT3Completion $p
+
+#!pwsh
+
+Get-GPT3Completion 'If cell A1 is less than 10 show "yes" otherwise show "no"'
+
+#!pwsh
+
+ai "write a function name 'FizzBuzz' that prints the numbers from 1 to 16, using PowerShell"
