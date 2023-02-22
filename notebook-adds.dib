@@ -1,0 +1,70 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","aliases":["c#","C#"],"languageName":"C#"},{"name":"vscode","languageName":null,"aliases":["frontend"]}]}}
+
+#!markdown
+
+# Active Directory
+
+#!markdown
+
+### User Accounts
+
+#!pwsh
+
+$users = Get-ADUser -Filter *
+
+#!pwsh
+
+$user = Get-ADUser dstein
+
+#!pwsh
+
+$user = Get-ADUser -Filter {employeeId -eq '123456'}
+
+#!pwsh
+
+Get-ADUser -Filter "extensionAttribute7 -like '*'" -Properties extensionAttribute7 |
+	Where-Object {$_.extensionAttribute7 -in ('emp','cwr')}
+
+#!pwsh
+
+Get-ADUser -Filter {extensionAttribute7 -eq 'cwr' -or extensionAttribute7 -eq 'emp'}
+
+#!markdown
+
+Splatting
+
+#!pwsh
+
+$params = @{
+	Filter = {extensionAttribute7 -eq 'cwr' -or extensionAttribute7 -eq 'emp'}
+	Properties = 'extensionAttribute7','employeeId','employeeType','mail'
+}
+
+#$params
+$users = Get-ADUser @params
+
+#!markdown
+
+Splatting Append
+
+#!pwsh
+
+if ($SearchBase) {
+	$params.Add('SearchBase', 'CN=Users,DC=domain,DC=local')
+}
+
+if ($Credential) {
+	$params.Add('Credential', $Credential)
+}
+
+$users = Get-ADUser @params
+
+#!markdown
+
+Grouping and Counting
+
+#!pwsh
+
+$users | Group-Object extensionAttribute7 | Select Name,Count

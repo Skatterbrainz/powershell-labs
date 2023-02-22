@@ -1,6 +1,6 @@
 #!meta
 
-{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#","aliases":["c#","C#"]},{"name":"vscode","aliases":["frontend"],"languageName":null},{"name":".NET","aliases":[]},{"name":"fsharp","languageName":"F#","aliases":["f#","F#"]},{"name":"html","languageName":"HTML","aliases":[]},{"name":"kql","languageName":"KQL","aliases":[]},{"name":"mermaid","languageName":"Mermaid","aliases":[]},{"name":"pwsh","languageName":"PowerShell","aliases":["powershell"]},{"name":"sql","languageName":"SQL","aliases":[]},{"name":"value","aliases":[]}]}}
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"name":"csharp","languageName":"C#","aliases":["c#","C#"]},{"name":"vscode","aliases":["frontend"],"languageName":null},{"name":".NET","aliases":[],"languageName":null},{"name":"fsharp","languageName":"F#","aliases":["f#","F#"]},{"name":"html","languageName":"HTML","aliases":[]},{"name":"kql","languageName":"KQL","aliases":[]},{"name":"mermaid","languageName":"Mermaid","aliases":[]},{"name":"pwsh","languageName":"PowerShell","aliases":["powershell"]},{"name":"sql","languageName":"SQL","aliases":[]},{"name":"value","aliases":[],"languageName":null}]}}
 
 #!markdown
 
@@ -22,31 +22,144 @@
 
 #!markdown
 
-### PowerShellAI setup
+### Overview
 
 #!markdown
 
-##### Import the module
-
-#!pwsh
-
-if (!(Get-Module PowerShellAI -ListAvailable)) {
-	Write-Output "Install-Module PowerShellAI"
-} else {
-	Update-Module PowerShellAI
-	Write-Output "Module is updated"
-}
+* OpenAI vs. ChatGPT / InstructGPT
+  * LLM = Large Language Model
+* Subscription / Pricing / Tokens / Orgs / Budgets
+* REST API
+  * GPT-3, Codex, DALL-E
+  * Completions
+  * Moderations
+  * Edits
 
 #!markdown
 
-#### Define the OpenAIKey environment variable ($env:OpenAIKey)
+### Using the API
+
+#!markdown
+
+Using CURL
 
 #!pwsh
 
-#$env:OpenAIKey = "" # paste API key and run
-if (Test-Path HKCU:\SOFTWARE\Skatterbrainz) {
-	$env:OpenAIKey = $(Get-ItemProperty -Path HKCU:\software\Skatterbrainz -Name OpenAIKey).OpenAIKey
+curl https://api.openai.com/v1/completions `
+	-H 'Content-Type: application/json' `
+	-H "Authorization: Bearer $($env:OpenAIKey)" `
+	-d '{
+		"model": "text-davinci-003",
+		"prompt": "List the 3 most populated US states with population, and abbreviation, output as a markdown table",
+		"max_tokens": 1000,
+		"temperature": 0
+	}'
+
+#!markdown
+
+Using Python 3
+
+#!value
+
+# python
+import os
+import openai
+openai.api_key = open('pykey.txt').read()
+# openai.api_key = os.getenv('OpenAIKey')
+
+question = "List the 3 most populated US states with population, and abbreviation, output in json format"
+aimodel = "text-davinci-003"
+
+os.system('cls')
+print('Submitting request to openai...')
+response = openai.Completion.create(model=aimodel,prompt=question,temperature=0,max_tokens=1000)
+print(response.choices[0].text)
+
+#!markdown
+
+Invoke Script (Example)
+
+#!value
+
+# python
+import os
+os.chdir('C:\\git\\powershell-labs')
+os.system('cls')
+exec(open('openaisample.py').read())
+
+#!markdown
+
+Using PowerShell
+
+#!pwsh
+
+$headers = @{
+	'Content-Type'='application/json';
+	'Authorization'="Bearer $($env:OpenAIKey)"
 }
+
+$body = @{
+	"model" = "text-davinci-003"
+	"prompt" = "List the 3 most populated US states with population, and abbreviation, output in XML"
+	"max_tokens" = 1000
+	"temperature" = 0
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri 'https://api.openai.com/v1/completions' -Headers $headers -Method POST -Body $body
+
+#!pwsh
+
+$response = Invoke-RestMethod -Uri 'https://api.openai.com/v1/completions' -Headers $headers -Method POST -Body $body
+$response.choices | % { $_.text }
+
+#!markdown
+
+### PowerShellAI
+
+#!markdown
+
+* PowerShell Module written by Doug Finke (author of "ImportExcel") YouTube/GitHub: @DougFinke
+* Provides a similar capability to the Python wrapper for the OpenAI API
+* Install-Module PowerShellAI
+* Uses an environment variable to store the API key ("OpenAIKey")
+
+#!markdown
+
+#### Completions
+
+#!pwsh
+
+Get-GPT3Completion -Prompt "If it is 9:45 PM in Virginia right now, what time is it in Seattle?"
+
+#!pwsh
+
+ai "If John is 42 years old, Bob is 40 years old, and Ray is older than Bob but younger than John, how old is Ray?"
+
+#!pwsh
+
+$text = @"
+Write the comment help for the following powershell function:
+
+function Get-DeptName {
+	param (
+		[parameter(Mandatory)][int]$DeptID,
+		[parameter()][string]$SqlInstance = "sql001.contoso.local",
+		[parameter()][string]$Database = "orginfo"
+	)
+	Invoke-DbaQuery -SqlInstance $SqlInstance -Database $Database -Query "select name from dept where id=$DeptID"
+}
+"@
+
+ai $text
+
+#!markdown
+
+Leverage PowerShellAI and ImportExcel modules
+
+#!pwsh
+
+ai "last 5 states to join the nation, with their abbreviations and the year they joined, as a markdown table" |
+	ConvertFrom-GPTMarkdownTable | Export-Excel -Show
 
 #!markdown
 
@@ -67,10 +180,11 @@ Stage and Commit changes with AI-generated commit message
 cd "c:\git\azurelabs"
 git stage --all
 git status | ai "write me a detailed commit message for the staged changes in this repo" | % { git commit -m "$($_)" }
+git push
 
 #!markdown
 
-### Examples - Moderation API
+### Moderation API
 
 #!markdown
 
@@ -103,7 +217,7 @@ Get-OpenAIModeration "I want to destroy them." | foreach { $_.psobject.propertie
 
 #!markdown
 
-### Examples - Edits API
+### Edits API
 
 #!markdown
 
