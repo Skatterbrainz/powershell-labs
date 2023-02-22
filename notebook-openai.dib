@@ -4,7 +4,27 @@
 
 #!markdown
 
-# OpenAI with PowerShellAI module
+# OpenAI with PowerShell
+
+#!markdown
+
+### Overview
+
+#!markdown
+
+* What is OpenAI? ChatGPT?
+* OpenAI vs. ChatGPT / InstructGPT
+  * LLM = Large Language Model (2019, 2021)
+  * Subscription / Pricing / Tokens / Orgs / Budgets
+* REST API
+  * GPT-3, Codex, DALL-E
+  * Models: ada, babbage, curie, davinci
+  * Completions
+  * Moderations
+  * Edits
+  * Fine-Tuning
+  * Embeddings
+  * more...
 
 #!markdown
 
@@ -19,21 +39,6 @@
 * Store API key in a safe place (key vault, etc.)
 * Import into environment variable "OpenAIKey" ($env:OpenAIKey)
 * Install-Module PowerShellAI
-
-#!markdown
-
-### Overview
-
-#!markdown
-
-* OpenAI vs. ChatGPT / InstructGPT
-  * LLM = Large Language Model
-* Subscription / Pricing / Tokens / Orgs / Budgets
-* REST API
-  * GPT-3, Codex, DALL-E
-  * Completions
-  * Moderations
-  * Edits
 
 #!markdown
 
@@ -112,6 +117,17 @@ Invoke-RestMethod -Uri 'https://api.openai.com/v1/completions' -Headers $headers
 $response = Invoke-RestMethod -Uri 'https://api.openai.com/v1/completions' -Headers $headers -Method POST -Body $body
 $response.choices | % { $_.text }
 
+#!pwsh
+
+$body = @{
+	"model" = "text-curie-001"
+	"prompt" = "Translate to Spanish: I really love my job!"
+	"max_tokens" = 10
+	"temperature" = 0
+} | ConvertTo-Json
+$response = Invoke-RestMethod -Uri 'https://api.openai.com/v1/completions' -Headers $headers -Method POST -Body $body
+$response.choices | % { $_.text }
+
 #!markdown
 
 ### PowerShellAI
@@ -184,32 +200,42 @@ git push
 
 #!markdown
 
-### Moderation API
+#### Moderations
 
 #!markdown
 
 * Definition: Given a input text, outputs if the model classifies it as violating OpenAI's content policy.
+* 7 deadly categories: sexual, hate, violence, self-harm, sexual/minors, hate/threatening, violence/graphic
+* Supported models: text-moderation-stable, text-moderation-latest
 * Reference: https://platform.openai.com/docs/api-reference/moderations
 
 #!pwsh
 
-Get-OpenAIModeration "I hate red cars"
+Get-OpenAIModeration "I hate McAfee antivirus"
 
 #!pwsh
 
-Get-OpenAIModeration "I want to destroy red cars."
+Get-OpenAIModeration "I want to destroy McAfee antivirus." | foreach {
+	$_.psobject.properties | where {$_.Value -eq $true} | select name
+}
 
 #!pwsh
 
-Get-OpenAIModeration "I want to destroy them."
+Get-OpenAIModeration "I want to destroy them." | foreach {
+	$_.psobject.properties | where {$_.Value -eq $true} | select name
+}
 
 #!pwsh
 
-Get-OpenAIModeration "I want to smash it with a hammer!"
+Get-OpenAIModeration "I want to smash it with a hammer!" | foreach {
+	$_.psobject.properties | where {$_.Value -eq $true} | select name
+}
 
 #!pwsh
 
-Get-OpenAIModeration "I want to smash them with a hammer!"
+Get-OpenAIModeration "I want to smash them with a hammer!" | foreach {
+	$_.psobject.properties | where {$_.Value -eq $true} | select name
+}
 
 #!pwsh
 
@@ -217,49 +243,17 @@ Get-OpenAIModeration "I want to destroy them." | foreach { $_.psobject.propertie
 
 #!markdown
 
-### Edits API
+#### Edits
 
 #!markdown
 
 * Definition: Given a prompt and an instruction, the model will return an edited version of the prompt
+* Supported models: text-davinci-edit-001 or code-davinci-edit-001
 * Reference: https://platform.openai.com/docs/api-reference/edits
 
 #!pwsh
 
-ai "show the regex too vlidate email user"
-
-#!pwsh
-
-Get-OpenAIEdit "powershell code get tp 5 us states wth most people with 2020 population n their capitals in json" -Instruction "fix the spelling mistakes"
-
-#!pwsh
-
-Get-OpenAIEdit "powershell code get tp 5 us states wth most people with 2020 population n their capitals in json" -Instruction "fix the spelling mistakes" -edits 3
-
-#!pwsh
-
-ai "use powershell regex, validate text as being a valid email address"
-
-#!pwsh
-
-ai "powershell code get the top 5 us states with most people with 2020 population"
-
-#!pwsh
-
-ai "powershell code get the top 5 us states with most people with 2020 population" -max_tokens 2000
-
-#!markdown
-
-#### Test Output
-
-#!pwsh
-
-"mickey.mouse@disney.com" -match '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-"mickey.mouse@disneycom" -match '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-
-#!pwsh
-
-ai "use powershell regex, validate text as being a valid email address"
+Get-OpenAIEdit "Nams of first thre presidents of the US" -Instruction "fix the spelling mistakes"
 
 #!markdown
 
