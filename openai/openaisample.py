@@ -1,5 +1,8 @@
 import os
 import openai
+
+os.chdir('C:\\git\\powershell-labs\\openai')
+
 openai.api_key = open('pykey.txt').read()
 
 question = "List the 3 most populated US states with population, and abbreviation, output in json format"
