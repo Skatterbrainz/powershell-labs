@@ -1,17 +1,20 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
 #!markdown
 
 # Performance - File I/O
 
 #!markdown
 
-### Finding a File by Name
+### Finding Files in a Folder
 
 #!pwsh
 
 Measure-Command {
 	for ($i = 0; $i -lt 1000; $i++) {
-		$files = Get-ChildItem -Path c:\git\tech-notes\memcm | 
-			Where-Object {$_.Name -match "cmg"} | Select-Object -ExpandProperty FullName
+		$files = Get-ChildItem -Path c:\git\tech-notes\memcm | Where-Object {$_.Name -like "*.md"}
 	}
 } | Select-Object -ExpandProperty TotalMilliseconds
 
@@ -19,7 +22,18 @@ Measure-Command {
 
 Measure-Command {
 	for ($i = 0; $i -lt 1000; $i++) {
-		$files = Get-ChildItem -Path c:\git\tech-notes\memcm -Filter "*cmg*" | Select-Object -ExpandProperty FullName
+		$files = Get-ChildItem -Path c:\git\tech-notes\memcm -Filter "*.md"
+	}
+} | Select-Object -ExpandProperty TotalMilliseconds
+
+#!pwsh
+
+# SearchOption = "TopDirectoryOnly" or "AllDirectories"
+# GetFiles($path, $filter, $searchoption)
+# EnumerateFiles($path, $filter, $searchoption)
+Measure-Command {
+	for ($i = 0; $i -lt 1000; $i++) {
+		$files = @([System.IO.Directory]::GetFiles("C:\git\tech-notes\memcm", "*.md","AllDirectories"))
 	}
 } | Select-Object -ExpandProperty TotalMilliseconds
 
