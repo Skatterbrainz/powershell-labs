@@ -9,4 +9,3 @@ Get-Secret -Name AzTenantID -AsPlainText
 Get-Secret -Name q_TMHCC_Azure
 
 Get-SecretInfo -Vault SecretStore
-
