@@ -1,0 +1,88 @@
+[
+	{
+		"name": "VM01-DC01",
+		"generation": 2,
+		"image": "D:\\Sources\\ISO\\Windows Server 2022 (x64).iso",
+		"vmswitch": "Default switch",
+		"port": "port1",
+		"vlan": 199,
+		"cpu": 2,
+		"ram": "8GB",
+		"disksize": "60GB",
+		"rootpath": "D:\\Hyper-V",
+		"secureboot": "on",
+		"comment": "Domain Controller"
+	},
+	{
+		"name": "VM02-FS01",
+		"generation": 2,
+		"image": "D:\\Sources\\ISO\\Windows Server 2019, updated June 2021 (VL).ISO",
+		"vmswitch": "Default switch",
+		"port": "port1",
+		"vlan": 199,
+		"cpu": 2,
+		"ram": "8GB",
+		"disksize": "60GB",
+		"rootpath": "D:\\Hyper-V",
+		"secureboot": "on",
+		"comment": "File Server"
+	},
+	{
+		"name": "VM03-W10",
+		"generation": 2,
+		"image": "D:\\Sources\\ISO\\Windows_10_Business_Editions_20H2_x64.iso",
+		"vmswitch": "Default switch",
+		"port": "port1",
+		"vlan": 199,
+		"cpu": 2,
+		"ram": "8GB",
+		"disksize": "60GB",
+		"rootpath": "D:\\Hyper-V",
+		"secureboot": "on",
+		"comment": "Windows 10 workstation"
+	},
+	{
+		"name": "VM04-W11",
+		"generation": 2,
+		"image": "D:\\Sources\\ISO\\Windows_11_Enterprise_21H2_x64.ISO",
+		"vmswitch": "Default switch",
+		"port": "port1",
+		"vlan": 199,
+		"cpu": 2,
+		"ram": "8GB",
+		"disksize": "60GB",
+		"rootpath": "D:\\Hyper-V",
+		"secureboot": "on",
+		"comment": "Windows 11 workstation"
+	},
+	{
+		"name": "VM05-LinuxMint",
+		"generation": 2,
+		"image": "D:\\Sources\\ISO\\linuxmint-21.1-cinnamon-64bit.iso",
+		"vmswitch": "Default switch",
+		"port": "port1",
+		"vlan": 199,
+		"cpu": 2,
+		"ram": "8GB",
+		"disksize": "50GB",
+		"rootpath": "D:\\Hyper-V",
+		"secureboot": "off",
+		"comment": "Linux Mint 21.1"
+	},
+	{
+		"name": "VM06-LinuxKali",
+		"generation": 2,
+		"image": "D:\\Sources\\ISO\\kali-linux-2023.2a-installer-amd64.iso",
+		"vmswitch": "Default switch",
+		"port": "port1",
+		"vlan": 199,
+		"cpu": 2,
+		"ram": "8GB",
+		"disksize": "50GB",
+		"rootpath": "D:\\Hyper-V",
+		"secureboot": "off",
+		"comment": "Linux Mint 21.1"
+	}
+]
+
+
